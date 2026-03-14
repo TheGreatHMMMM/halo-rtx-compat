@@ -12,7 +12,7 @@ namespace comp::game
 	//	return reinterpret_cast<IDirect3DDevice9*>(*d3d_dev_sample_addr);
 	//}
 
-	extern some_struct_containing_matrices* vp;
+	extern CameraRenderMatrices* CameraRenderMatrices_ptr;
 
 
 	// --------------
@@ -33,4 +33,5 @@ namespace comp::game
 	// ---
 
 	extern void init_game_addresses();
+	extern void apply_patches();
 }

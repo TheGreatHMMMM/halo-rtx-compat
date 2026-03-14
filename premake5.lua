@@ -158,6 +158,8 @@ workspace "remix-comp-base"
 	project "remix-comp-base"
 	kind "SharedLib"
 	language "C++"
+	targetname "d3d9"
+	targetextension ".dll"
 
 	linkoptions {
 		"/PDBCompress"
@@ -169,6 +171,7 @@ workspace "remix-comp-base"
 	files {
 		"./src/comp/**.hpp",
 		"./src/comp/**.cpp",
+		"./src/comp/d3d9.def",
 	}
 
 	includedirs {
@@ -205,11 +208,6 @@ workspace "remix-comp-base"
 	}
 
 	warnings "Extra"
-
-	-- Post-build
-	postbuildcommands {
-		"MOVE /Y \"$(TargetDir)remix-comp-base.dll\" \"$(TargetDir)remix-comp-base.asi\"",
-	}
 
 	dependencies.imports()
 

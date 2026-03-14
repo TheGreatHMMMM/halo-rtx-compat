@@ -10,7 +10,7 @@ namespace comp
 	std::unordered_set<HWND> wnd_class_list;
 
 	// #Step 1: Start the game and copy the class name from the console window and put it in here:
-	#define WINDOW_CLASS_NAME "YOUR_WINDOW_CLASS_NAME" // Eg: "GameFrame"
+	#define WINDOW_CLASS_NAME "Halo" // Eg: "GameFrame"
 
 	BOOL CALLBACK enum_windows_proc(HWND hwnd, LPARAM lParam)
 	{
@@ -82,7 +82,8 @@ BOOL APIENTRY DllMain(HMODULE hmodule, const DWORD ul_reason_for_call, LPVOID)
 		shared::globals::setup_homepath();
 
 		shared::common::set_console_color_blue(true);
-		std::cout << "Launching RTX Remix Compatiblity Base Version [" << COMP_MOD_VERSION_MAJOR << "." << COMP_MOD_VERSION_MINOR << "." << COMP_MOD_VERSION_PATCH << "]\n";
+		std::cout << "=== Running as d3d9.dll Proxy ===\n";
+		std::cout << "RTX Remix Compatiblity Base Version [" << COMP_MOD_VERSION_MAJOR << "." << COMP_MOD_VERSION_MINOR << "." << COMP_MOD_VERSION_PATCH << "]\n";
 		std::cout << "> Compiled On : " + std::string(__DATE__) + " " + std::string(__TIME__) + "\n";
 		std::cout << "> https://github.com/xoxor4d/remix-comp-base\n\n";
 		shared::common::set_console_color_default();
@@ -95,6 +96,9 @@ BOOL APIENTRY DllMain(HMODULE hmodule, const DWORD ul_reason_for_call, LPVOID)
 
 		// Setup memory addresses (eg. patterns)
 		comp::game::init_game_addresses();
+
+		// Apply game memory patches (mouse, culling, etc.)
+		comp::game::apply_patches();
 
 		// Register d3d9 module to create a d3d9 proxy interface
 		shared::common::loader::module_loader::register_module(std::make_unique<comp::d3d9ex>());

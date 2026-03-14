@@ -906,17 +906,8 @@ namespace comp
 
 	d3d9ex::d3d9ex()
 	{
-		// Detour remix' Direct3DCreate9 detour :p
-		// We end up with GameD3D -> OurD3D -> BridgeD3D -> Runtime
-		const auto addr = (DWORD)GetProcAddress(GetModuleHandle(L"d3d9.dll"), "Direct3DCreate9");
-;
-		const auto status = MH_CreateHook((LPVOID)addr, &d3d9ex::HookedDirect3DCreate9, (LPVOID*)&Direct3DCreate9_original);
-		MH_EnableHook(MH_ALL_HOOKS);
-
-		if (status == MH_OK) {
-			shared::common::log("d3d9", "Hooked 'Direct3DCreate9' import.", shared::common::LOG_TYPE::LOG_TYPE_DEFAULT, false);
-		}
-
+		// Note: Direct3DCreate9 interception is now handled by the d3d9_proxy.dll
+		// The proxy wraps the Remix interface with our d3d9ex::_d3d9 wrapper
 		shared::common::log("d3d9", "Module initialized.", shared::common::LOG_TYPE::LOG_TYPE_DEFAULT, false);
 	}
 }
