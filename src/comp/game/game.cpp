@@ -1,5 +1,6 @@
 #include "std_include.hpp"
 #include "shared/common/flags.hpp"
+#include "chimera/extend_limits.hpp"
 
 namespace comp::game
 {
@@ -91,21 +92,14 @@ namespace comp::game
 	void apply_patches()
 	{
 		// ----------------------------------------------------------------
-		// P_DontStealMouse
+		// Chimera engine limit extensions
 		// ----------------------------------------------------------------
-		// Halo CE passes DISCL_EXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY
-		// (0x0D or similar) to IDirectInputDevice8::SetCooperativeLevel for the
-		// mouse device.  This grants Halo exclusive ownership, which:
-		//   • Prevents RTX Remix from reading the cursor position.
-		//   • Breaks any overlay or debugger that also wants the mouse.
-		//
-		// Patching byte +0x5B to 0x06 changes the flag to
-		// DISCL_NONEXCLUSIVE (0x02) | DISCL_FOREGROUND (0x04) = 0x06.
-		// The mouse still works in-game (Halo reads raw axis deltas, not
-		// absolute position) but no longer blocks other applications.
-		//
-		// Insight from Halo CE VR mod (Hooks.cpp :: P_DontStealMouse):
-		//   SetByte(o.CreateMouseDevice.Address + 0x5B, 6);
+		comp::chimera::extend_limits();
+
+
+		// ----------------------------------------------------------------
+		// P_DontStealMouse pulled from the Halo CE VR mod
+		// ----------------------------------------------------------------
 		if (create_mouse_device_addr)
 		{
 			write_byte(create_mouse_device_addr + 0x5B, 0x06);
@@ -120,6 +114,7 @@ namespace comp::game
 				shared::common::LOG_TYPE::LOG_TYPE_ERROR, true);
 		}
 
+		
 		// ----------------------------------------------------------------
 		// NoCull – disable frustum/portal/PVS culling
 		// ----------------------------------------------------------------

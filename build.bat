@@ -145,6 +145,7 @@ cl.exe %CXXFLAGS% %INC% /I src\comp ^
     src\comp\proxy\d3d9_proxy.cpp ^
     src\comp\main.cpp ^
     src\comp\game\game.cpp ^
+    src\comp\chimera\extend_limits.cpp ^
     src\comp\modules\d3d9ex.cpp ^
     src\comp\modules\imgui.cpp ^
     src\comp\modules\renderer.cpp

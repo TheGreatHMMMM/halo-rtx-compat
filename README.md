@@ -36,6 +36,7 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 
 ## Credits
 - [xoxor4d](https://patreon.com/xoxor4d) - Creator of the [RTX Remix Compatibility Codebase](https://github.com/xoxor4d/remix-comp-base) this mod is built upon — consider supporting them on [Patreon](https://patreon.com/xoxor4d)!
+- [Chimera](https://github.com/SnowyMouse/chimera) - directly adpated some patches and whole features
 - [LivingFray - HaloCEVR](https://github.com/LivingFray/HaloCEVR) - Halo CE mod reference and inspiration
 - [NVIDIA - RTX Remix](https://github.com/NVIDIAGameWorks/rtx-remix)
 - [People of the showcase discord](https://discord.gg/j6sh7JD3v9) - especially the nvidia engineers
