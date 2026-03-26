@@ -15,10 +15,21 @@ bool InitializeD3D9Proxy()
 	if (g_hD3D9Remix)
 		return true;
 
-	g_hD3D9Remix = LoadLibraryW(L"d3d9_remix.dll");
+	// Build an absolute path to d3d9_remix.dll sitting next to our own DLL.
+	// Using just a bare filename would search the EXE directory first, which
+	// may differ from the directory our DLL lives in.
+	wchar_t selfPath[MAX_PATH];
+	GetModuleFileNameW(shared::globals::dll_hmodule, selfPath, MAX_PATH);
+	wchar_t* lastSlash = wcsrchr(selfPath, L'\\');
+	if (lastSlash)
+		wcscpy_s(lastSlash + 1, MAX_PATH - static_cast<int>(lastSlash - selfPath + 1), L"d3d9_remix.dll");
+
+	g_hD3D9Remix = LoadLibraryW(selfPath);
 	if (!g_hD3D9Remix)
 	{
-		shared::common::log("d3d9_proxy", "Failed to load d3d9_remix.dll", shared::common::LOG_TYPE::LOG_TYPE_ERROR, true);
+		char narrowPath[MAX_PATH];
+		WideCharToMultiByte(CP_UTF8, 0, selfPath, -1, narrowPath, MAX_PATH, nullptr, nullptr);
+		shared::common::log("d3d9_proxy", std::format("Failed to load d3d9_remix.dll from: {}", narrowPath), shared::common::LOG_TYPE::LOG_TYPE_ERROR, true);
 		return false;
 	}
 

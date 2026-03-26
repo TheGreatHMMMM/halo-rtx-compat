@@ -31,10 +31,11 @@ Please see: https://github.com/xoxor4d/remix-comp-base/tree/master/documentation
 
 ## Compiling
 - Clone the repository `git clone --recurse-submodules https://github.com/YOUR_USERNAME/halo-rtx-compat.git`
-- Optional: Setup a global path variable named `REMIX_COMP_ROOT` that points to your game folder
-  & `REMIX_COMP_ROOT_EXE` which includes the exe name of your game.
-- Run `generate-buildfiles_vs22.bat` to generate VS project files
-- Compile the mod — a `d3d9.dll` proxy will be generated for you.
+- Install [VS 2022 Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+  (the full VS 2022 IDE works too). Select the **Desktop development with C++** workload.
+- Optional: set environment variable `REMIX_COMP_ROOT` to your game folder and `REMIX_COMP_ROOT_EXE` to the exe name.
+- Run `build.bat` — it compiles everything directly with `cl.exe` and produces `build\bin\Release\d3d9.dll`.
+  - Pass `debug` as an argument for a debug build: `build.bat debug`
 - Copy everything inside the `assets` folder into the game directory.
 
 <br>
