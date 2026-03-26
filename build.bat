@@ -142,7 +142,7 @@ if errorlevel 1 goto :error
 cl.exe %CXXFLAGS% %INC% /I src\comp ^
     /Yu"std_include.hpp" /Fp%COMP_PCH% /Fo%OBJDIR%\comp\ ^
     src\comp\comp.cpp ^
-    src\comp\d3d9_proxy.cpp ^
+    src\comp\proxy\d3d9_proxy.cpp ^
     src\comp\main.cpp ^
     src\comp\game\game.cpp ^
     src\comp\modules\d3d9ex.cpp ^
@@ -164,7 +164,7 @@ REM Build a response file from all compiled .obj files
 ) > %OBJDIR%\link.rsp
 
 link.exe /nologo /DLL %LTCG% ^
-    /DEF:src\comp\d3d9.def ^
+    /DEF:src\comp\proxy\d3d9.def ^
     /OUT:%OUTDIR%\d3d9.dll ^
     /PDB:%OUTDIR%\d3d9.pdb ^
     /MACHINE:X86 ^
