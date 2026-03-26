@@ -1,9 +1,7 @@
-<h1 align="center">Halo CE RTX Remix Compatibility Mod</h1>
+<h1 align="left">Halo CE RTX Remix Compatibility Mod</h1>
+<div align="left" markdown="1"> 
+A RTX Remix compatibility mod for Halo: Combat Evolved, built on top of https://github.com/xoxor4d/remix-comp-base
 <br>
-<div align="center" markdown="1"> 
-A RTX Remix compatibility mod for Halo: Combat Evolved, built on top of the  
-[RTX Remix Compatibility Codebase](https://github.com/xoxor4d/remix-comp-base) by [xoxor4d](https://patreon.com/xoxor4d).  
-Feel free to join the discord server: https://discord.gg/FMnfhpfZy9
 <br>
 </div>
 
@@ -40,11 +38,9 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 - [xoxor4d](https://patreon.com/xoxor4d) - Creator of the [RTX Remix Compatibility Codebase](https://github.com/xoxor4d/remix-comp-base) this mod is built upon — consider supporting them on [Patreon](https://patreon.com/xoxor4d)!
 - [LivingFray - HaloCEVR](https://github.com/LivingFray/HaloCEVR) - Halo CE mod reference and inspiration
 - [NVIDIA - RTX Remix](https://github.com/NVIDIAGameWorks/rtx-remix)
-- [People of the showcase discord](https://discord.gg/j6sh7JD3v9) - especially the nvidia engineers ✌️
+- [People of the showcase discord](https://discord.gg/j6sh7JD3v9) - especially the nvidia engineers
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [minhook](https://github.com/TsudaKageyu/minhook)
-- All 🍓 Testers
+- All Testers
 
-<div align="center" markdown="1"> 
-And of course, all the people that helped along the way!
 </div>
