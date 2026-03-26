@@ -18,10 +18,6 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 
 <br>
 
-## Documentation / Guides
-Please see: https://github.com/xoxor4d/remix-comp-base/tree/master/documentation
-<br>
-
 ## Installation
 1. Rename the RTX Remix `d3d9.dll` to `d3d9_remix.dll` in your Halo CE game directory.
 2. Compile the mod (see below) — it will generate a `d3d9.dll` for you to use as the proxy.
