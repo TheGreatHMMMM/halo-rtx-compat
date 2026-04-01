@@ -38,10 +38,10 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 - [xoxor4d](https://patreon.com/xoxor4d) - Creator of the [RTX Remix Compatibility Codebase](https://github.com/xoxor4d/remix-comp-base) this mod is built upon — consider supporting them on [Patreon](https://patreon.com/xoxor4d)!
 - [Ekozmaster (Emanuel Kozerski)](https://github.com/Ekozmaster/Vibe-Reverse-Engineering) - MIT-licensed Vibe Reverse Engineering toolkit
 - [Kim2091](https://github.com/Kim2091/Vibe-Reverse-Engineering) - Fork combining xoxor4d's and Ekozmaster's work, from which the MIT-licensed files were obtained (remix-comp-integration branch)
-- [Chimera](https://github.com/SnowyMouse/chimera) - directly adapted some patches and whole features (GPLv3)
+- [Chimera](https://github.com/SnowyMouse/chimera) - Directly adapted some patches and whole features (GPLv3)
 - [LivingFray - HaloCEVR](https://github.com/LivingFray/HaloCEVR) - Halo CE mod reference and inspiration
 - [NVIDIA - RTX Remix](https://github.com/NVIDIAGameWorks/rtx-remix)
-- [People of the showcase discord](https://discord.gg/j6sh7JD3v9) - especially the nvidia engineers
+- [People of the showcase discord](https://discord.gg/j6sh7JD3v9) - Especially the nvidia engineers
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [minhook](https://github.com/TsudaKageyu/minhook)
 - All Testers
@@ -50,7 +50,7 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
 Some files are derived from MIT-licensed projects by xoxor4d and Ekozmaster.
-MIT is compatible with GPLv3 — those files retain their MIT headers and the
+MIT is compatible with GPLv3, those files retain their MIT headers and the
 full original license texts are reproduced in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 </div>
