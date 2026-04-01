@@ -20,6 +20,7 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 1. Rename the RTX Remix `d3d9.dll` to `d3d9_remix.dll` in your Halo CE game directory.
 2. Compile the mod (see below) — it will generate a `d3d9.dll` for you to use as the proxy.
 3. Place the generated `d3d9.dll` into your Halo CE game directory alongside `d3d9_remix.dll`.
+4. Launch the game with the `-window` flag to enable borderless fullscreen (e.g. `haloce.exe -window`).
 
 <br>
 
