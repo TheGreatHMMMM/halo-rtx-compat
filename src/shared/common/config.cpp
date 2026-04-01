@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 github.com/xoxor4d
+// Copyright (c) 2026 Kim2091
 // Original author: xoxor4d (https://github.com/xoxor4d/remix-comp-base)
 // Incorporated via Ekozmaster's MIT-licensed project and Kim2091's fork
 // See THIRD-PARTY-NOTICES.md for the full license texts
