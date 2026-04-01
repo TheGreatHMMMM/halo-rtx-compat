@@ -66,11 +66,11 @@ set "CBASE=/nologo /c /Zi /W0 /D WIN32 /D _WINDOWS"
 
 if /i "%CONFIG%"=="Release" (
     set "RT=/MT"
-    set "OPT=/O2 /D NDEBUG"
+    set "OPT=/O2 /D NDEBUG /MP"
     set "LTCG="
 ) else (
     set "RT=/MTd"
-    set "OPT=/Od /D DEBUG /D _DEBUG"
+    set "OPT=/Od /D DEBUG /D _DEBUG /MP"
     set "LTCG="
 )
 
@@ -94,7 +94,7 @@ REM ========================================================================
 REM  2. ImGui  (C++, no PCH)
 REM ========================================================================
 echo [2/4] Compiling ImGui...
-cl.exe %CXXFLAGS% /W0 %INC% /Fo%OBJDIR%\imgui\ ^
+cl.exe %CXXFLAGS% %INC% /Fo%OBJDIR%\imgui\ ^
     deps\imgui\imgui.cpp ^
     deps\imgui\imgui_demo.cpp ^
     deps\imgui\imgui_draw.cpp ^
@@ -172,7 +172,7 @@ REM Build a response file from all compiled .obj files
 link.exe /nologo /DLL %LTCG% ^
     /DEF:src\comp\proxy\d3d9.def ^
     /OUT:%OUTDIR%\d3d9.dll ^
-    /PDB:%OUTDIR%\d3d9.pdb ^
+    /DEBUG /PDB:%OUTDIR%\d3d9.pdb ^
     /MACHINE:X86 ^
     /LIBPATH:deps\dxsdk\Lib\x86 ^
     /NODEFAULTLIB:d3d9.lib ^
