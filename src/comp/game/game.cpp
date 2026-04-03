@@ -130,6 +130,13 @@ namespace comp::game
 		shared::common::log("Game", "NoCull: AABB frustum test applied",
 			shared::common::LOG_TYPE::LOG_TYPE_GREEN, true);
 
+		// Fix: prevent stack overflow in fcn.00458BF0 (light pre-computation).
+		// 0x00458E52: TEST AX,AX (85) -> XOR AX,AX (31); forces je at 0x458E54
+		// to always skip the 78-float array write.  BSP rasterizer unaffected.
+		write_byte(0x00458E52u, 0x31u);
+		shared::common::log("Game", "NoCull: AABB light-array overflow guard applied (0x00458E52)",
+			shared::common::LOG_TYPE::LOG_TYPE_GREEN, true);
+
 		// Point frustum test
 		shared::utils::hook::set(reinterpret_cast<void*>(0x0050D4C0), (BYTE)0x31, (BYTE)0xC0, (BYTE)0xC3);
 		shared::common::log("Game", "NoCull: Point frustum test applied",
