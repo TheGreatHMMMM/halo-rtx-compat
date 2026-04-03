@@ -1,0 +1,61 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: ManualBuild
+
+on:
+  workflow_dispatch:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        config: [Release, Debug]
+        platform: [Win32]
+        include:
+          - zip_name: HaloCE.zip
+            bin_name: Release
+            config: Release
+            platform: Win32
+          - zip_name: HaloCE_Debug.zip
+            bin_name: Debug
+            config: Debug
+            platform: Win32
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      with:
+        submodules: 'true'
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v3
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        ./build ${{matrix.config}}
+        XCOPY /E /I /Y .\assets\.trex .\build\bin\${{matrix.bin_name}}\.trex
+        XCOPY /E /I /Y .\assets\rtx_comp .\build\bin\${{matrix.bin_name}}\rtx_comp
+        del .\build\bin\${{matrix.bin_name}}\*.exp
+        del .\build\bin\${{matrix.bin_name}}\*.ilk
+        del .\build\bin\${{matrix.bin_name}}\*.lib
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: ${{matrix.zip_name}}
+        path: ./build/bin/${{matrix.bin_name}}/*
+        include-hidden-files: true
