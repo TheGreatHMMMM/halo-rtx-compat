@@ -8,6 +8,7 @@
 #include "std_include.hpp"
 #include "ffp_state.hpp"
 #include "../../comp/game/game.hpp"
+#include "shared/common/flags.hpp"
 
 namespace shared::common
 {
@@ -101,6 +102,28 @@ namespace shared::common
 		if (last_vs_) last_vs_->Release();
 		last_vs_ = shader;
 		ffp_active_ = false;
+
+
+		ShaderInfo::ShaderClasify info;
+		if (shader && !shader_info.is_shader_info_cached(shader, info))
+		{
+			bool dump_shader = false;// shared::common::flags::has_flag("dump_shaders");;
+			std::string decomp;
+			uint32_t hash = shader_info.get_shader_decomp(shader, &decomp, dump_shader);
+
+			if (decomp.contains("dcl_blendindices"))
+			{
+				info.type = ShaderInfo::SHADER_SKINNING;
+			}
+			else
+			{
+				info.type = ShaderInfo::SHADER_UNKNOWN;
+			}
+
+			shader_info.add_to_cache(hash, info);
+		}
+
+		vs_type = ShaderInfo::EShaderType(info.type);
 	}
 
 	bool ffp_state::on_set_pixel_shader(IDirect3DPixelShader9* shader)
@@ -108,6 +131,30 @@ namespace shared::common
 		if (shader) shader->AddRef();
 		if (last_ps_) last_ps_->Release();
 		last_ps_ = shader;
+
+
+		ShaderInfo::ShaderClasify info;
+		if (shader && !shader_info.is_shader_info_cached(shader, info))
+		{
+			bool dump_shader = false;// shared::common::flags::has_flag("dump_shaders");;
+			std::string decomp;
+			uint32_t hash = shader_info.get_shader_decomp(shader, &decomp, dump_shader);
+
+			if (decomp.contains("float4 c_primary_change_color") ||
+				(decomp.contains("mad r4, r2.w, c0, 1-r2.w") && decomp.contains("texld r2, t2"))
+			)
+			{
+				info.type = ShaderInfo::SHADER_SKINNING_COLOR_CHG;
+			}
+			else
+			{
+				info.type = ShaderInfo::SHADER_UNKNOWN;
+			}
+
+			shader_info.add_to_cache(hash, info);
+		}
+
+		ps_type = ShaderInfo::EShaderType(info.type);
 
 		// Swallow the call while in FFP mode (don't forward to real device)
 		return ffp_active_;

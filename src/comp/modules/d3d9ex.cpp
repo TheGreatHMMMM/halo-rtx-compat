@@ -3,7 +3,7 @@
 
 #include "imgui.hpp"
 #include "renderer.hpp"
-#include "shared/common/shader_cache.hpp"
+#include "shared/common/shader_info.hpp"
 #include "shared/common/ffp_state.hpp"
 
 namespace comp

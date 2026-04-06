@@ -8,6 +8,7 @@
 #pragma once
 #include <unordered_map>
 #include "config.hpp"
+#include "shader_info.hpp"
 
 namespace comp::game
 {
@@ -127,6 +128,10 @@ namespace shared::common
 
 		void increment_draw_count() { draw_call_count_++; }
 
+		ShaderInfo& get_shader_info() { return shader_info; }
+		ShaderInfo::EShaderType get_vs_shader_type() { return vs_type; }
+		ShaderInfo::EShaderType get_ps_shader_type() { return ps_type; }
+
 		// --- Utility ---
 
 		static void mat4_transpose(float* dst, const float* src);
@@ -154,6 +159,8 @@ namespace shared::common
 		// Shader tracking
 		IDirect3DVertexShader9* last_vs_ = nullptr;
 		IDirect3DPixelShader9* last_ps_ = nullptr;
+		ShaderInfo::EShaderType vs_type;
+		ShaderInfo::EShaderType ps_type;
 
 		// Vertex declaration tracking
 		IDirect3DVertexDeclaration9* last_decl_ = nullptr;
@@ -212,6 +219,8 @@ namespace shared::common
 		// Cache of patched vertex declarations (orig -> patched with stream-1 FLOAT2 TEXCOORD0).
 		// Created on demand when a draw has COLOR but no TEXCOORD (decal UV remapping).
 		std::unordered_map<IDirect3DVertexDeclaration9*, IDirect3DVertexDeclaration9*> patched_decl_cache_;
+
+		ShaderInfo shader_info;
 
 		// Internal helpers
 		void apply_transforms(IDirect3DDevice9* dev);
