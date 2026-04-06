@@ -39,6 +39,7 @@ It is built on top of xoxor4d's RTX Remix Compatibility Codebase.
 - [xoxor4d](https://patreon.com/xoxor4d) - Creator of the [RTX Remix Compatibility Codebase](https://github.com/xoxor4d/remix-comp-base) this mod is built upon, consider supporting them on [Patreon](https://patreon.com/xoxor4d)!
 - [Ekozmaster (Emanuel Kozerski)](https://github.com/Ekozmaster/Vibe-Reverse-Engineering) - MIT-licensed Vibe Reverse Engineering toolkit (used alongside Kim2091's FFP proxy work)
 - [Kim2091](https://github.com/Kim2091) - Author of the FFP proxy code integrated into xoxor4d's codebase that is apart of Ekozmaster's Vibe Reverse Engineering toolkit, consider supporting them on [Ko-fi](https://ko-fi.com/kim20913944)!
+- [whisperglen](https://github.com/whisperglen) - Showcase discord member and 3D tinkerer, contributed fixes and advice 
 - [Chimera](https://github.com/SnowyMouse/chimera) - Directly adapted some patches and whole features (GPLv3)
 - [LivingFray - HaloCEVR](https://github.com/LivingFray/HaloCEVR) - Halo CE mod reference and inspiration
 - [NVIDIA - RTX Remix](https://github.com/NVIDIAGameWorks/rtx-remix)

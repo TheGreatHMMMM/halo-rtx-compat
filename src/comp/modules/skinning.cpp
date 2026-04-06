@@ -29,6 +29,8 @@ namespace comp
 		D3DPRIMITIVETYPE pt, INT base_vtx, UINT min_vtx, UINT num_verts,
 		UINT start_idx, UINT prim_count)
 	{
+		using shared::common::ShaderInfo;
+
 		auto& ffp = shared::common::ffp_state::get();
 		auto* im = imgui::get();
 		if (im) im->m_stats._skin_dip_calls.track_single();
@@ -62,6 +64,15 @@ namespace comp
 
 		ffp.engage(dev);
 		ffp.setup_albedo_texture(dev);
+
+		//ffp.get_shader_info().get_shader_decomp(ffp.last_ps(), NULL, true);
+		bool is_color_change_shader = (ffp.get_ps_shader_type() == ShaderInfo::SHADER_SKINNING_COLOR_CHG);
+		if (is_color_change_shader)
+		{
+			const float* change_color = ffp.ps_const_data(); //we care about reg0
+			dev->SetRenderState(D3DRS_TEXTUREFACTOR, D3DCOLOR_COLORVALUE(change_color[0], change_color[1], change_color[2], change_color[3]));
+			dev->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
+		}
 
 		upload_bones(dev);
 
