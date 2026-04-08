@@ -274,18 +274,25 @@ namespace shared::common
 			}
 		}
 
-		if (has_blend_weight && has_blend_indices)
+		if (has_blend_indices)
 		{
 			cur_decl_is_skinned_ = true;
 
-			switch (blend_weight_type)
+			if (has_blend_weight)
 			{
-			case D3DDECLTYPE_FLOAT1:  cur_decl_num_weights_ = 1; break;
-			case D3DDECLTYPE_FLOAT2:  cur_decl_num_weights_ = 2; break;
-			case D3DDECLTYPE_FLOAT3:  cur_decl_num_weights_ = 3; break;
-			case D3DDECLTYPE_FLOAT4:  cur_decl_num_weights_ = 3; break;
-			case D3DDECLTYPE_UBYTE4N: cur_decl_num_weights_ = 3; break;
-			default:                  cur_decl_num_weights_ = 3; break;
+				switch (blend_weight_type)
+				{
+				case D3DDECLTYPE_FLOAT1:  cur_decl_num_weights_ = 1; break;
+				case D3DDECLTYPE_FLOAT2:  cur_decl_num_weights_ = 2; break;
+				case D3DDECLTYPE_FLOAT3:  cur_decl_num_weights_ = 3; break;
+				case D3DDECLTYPE_FLOAT4:  cur_decl_num_weights_ = 3; break;
+				case D3DDECLTYPE_UBYTE4N: cur_decl_num_weights_ = 3; break;
+				default:                  cur_decl_num_weights_ = 3; break;
+				}
+			}
+			else
+			{
+				cur_decl_num_weights_ = 0;
 			}
 		}
 	}

@@ -51,7 +51,7 @@ namespace comp
 		UINT stride = ffp.stream_stride(0);
 		INT combined_base = base_vtx + static_cast<INT>(min_vtx);
 
-		UINT vb_offset = expand_vertices(dev, src_vb, stream_off, combined_base, num_verts, stride);
+		UINT vb_offset = 0;// expand_vertices(dev, src_vb, stream_off, combined_base, num_verts, stride);
 
 		if (vb_offset == UINT_MAX)
 		{
@@ -76,16 +76,16 @@ namespace comp
 
 		upload_bones(dev);
 
-		IDirect3DVertexDeclaration9* orig_decl = nullptr;
-		dev->GetVertexDeclaration(&orig_decl);
-		dev->SetVertexDeclaration(skin_exp_decl_);
-		dev->SetStreamSource(0, streaming_vb_, vb_offset * SKIN_VTX_SIZE, SKIN_VTX_SIZE);
+		//IDirect3DVertexDeclaration9* orig_decl = nullptr;
+		//dev->GetVertexDeclaration(&orig_decl);
+		//dev->SetVertexDeclaration(skin_exp_decl_);
+		//dev->SetStreamSource(0, streaming_vb_, vb_offset * SKIN_VTX_SIZE, SKIN_VTX_SIZE);
 
 		auto hr = dev->DrawIndexedPrimitive(pt, -(INT)min_vtx, min_vtx, num_verts, start_idx, prim_count);
 
-		dev->SetVertexDeclaration(orig_decl);
-		if (orig_decl) orig_decl->Release();
-		dev->SetStreamSource(0, src_vb, ffp.stream_offset(0), stride);
+		//dev->SetVertexDeclaration(orig_decl);
+		//if (orig_decl) orig_decl->Release();
+		//dev->SetStreamSource(0, src_vb, ffp.stream_offset(0), stride);
 		//disable gpu skinning
 		dev->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
 		dev->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE);
@@ -328,10 +328,13 @@ namespace comp
 		int regs_per_bone = cfg.vs_regs_per_bone;
 		int max_bones = (num_bones > 48) ? 48 : num_bones;
 
+
+		int weights = ffp.cur_decl_num_weights();
+		DWORD vbf = !weights ? D3DVBF_0WEIGHTS : weights;
 		// Set render state BEFORE bone loop (matching proxy-minimal)
 		dev->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, TRUE);
 		// Halo CE gbxmodel: at most 2 nodes per vertex -> always D3DVBF_1WEIGHTS
-		dev->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
+		dev->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_0WEIGHTS);
 		ffp.set_skinning_setup(true);
 
 		for (int i = 0; i < max_bones; i++)
@@ -349,9 +352,6 @@ namespace comp
 			dev->SetTransform(static_cast<D3DTRANSFORMSTATETYPE>(D3DTS_WORLDMATRIX(i)),
 				reinterpret_cast<const D3DMATRIX*>(bone44));
 		}
-
-		dev->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
-		dev->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, TRUE);
 	}
 
 	void skinning::disable_skinning(IDirect3DDevice9* dev)
