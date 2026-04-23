@@ -124,17 +124,17 @@ namespace comp
 			ffp.setup_albedo_texture(dev);
 
 			const bool decl_patched = ffp.try_patch_decl_for_color_uv(dev);
-			if (decl_patched) {
-				UINT nv;
-				switch (PrimitiveType) {
-					case D3DPT_POINTLIST:    nv = PrimitiveCount; break;
-					case D3DPT_LINELIST:     nv = PrimitiveCount * 2; break;
-					case D3DPT_LINESTRIP:    nv = PrimitiveCount + 1; break;
-					case D3DPT_TRIANGLELIST: nv = PrimitiveCount * 3; break;
-					default:                 nv = PrimitiveCount + 2; break; // strip/fan
-				}
-				ffp.prepare_uv_stream(dev, StartVertex, nv);
-			}
+			//if (decl_patched) {
+			//	UINT nv;
+			//	switch (PrimitiveType) {
+			//		case D3DPT_POINTLIST:    nv = PrimitiveCount; break;
+			//		case D3DPT_LINELIST:     nv = PrimitiveCount * 2; break;
+			//		case D3DPT_LINESTRIP:    nv = PrimitiveCount + 1; break;
+			//		case D3DPT_TRIANGLELIST: nv = PrimitiveCount * 3; break;
+			//		default:                 nv = PrimitiveCount + 2; break; // strip/fan
+			//	}
+			//	ffp.prepare_uv_stream(dev, StartVertex, nv);
+			//}
 			decal_blend_guard blend_guard;
 			if (decl_patched) blend_guard.push(dev);
 			hr = dev->DrawPrimitive(PrimitiveType, StartVertex, PrimitiveCount);
@@ -225,10 +225,10 @@ namespace comp
 				ffp.setup_albedo_texture(dev);
 
 				const bool decl_patched = ffp.try_patch_decl_for_color_uv(dev);
-				if (decl_patched) {
-					const INT fv = static_cast<INT>(MinVertexIndex) + BaseVertexIndex;
-					if (fv >= 0) ffp.prepare_uv_stream(dev, static_cast<UINT>(fv), NumVertices);
-				}
+				//if (decl_patched) {
+				//	const INT fv = static_cast<INT>(MinVertexIndex) + BaseVertexIndex;
+				//	if (fv >= 0) ffp.prepare_uv_stream(dev, static_cast<UINT>(fv), NumVertices);
+				//}
 				decal_blend_guard blend_guard;
 				if (decl_patched) blend_guard.push(dev);
 				hr = dev->DrawIndexedPrimitive(PrimitiveType, BaseVertexIndex, MinVertexIndex, NumVertices, startIndex, primCount);
@@ -253,10 +253,10 @@ namespace comp
 			ffp.setup_albedo_texture(dev);
 
 			const bool decl_patched = ffp.try_patch_decl_for_color_uv(dev);
-			if (decl_patched) {
-				const INT fv = static_cast<INT>(MinVertexIndex) + BaseVertexIndex;
-				if (fv >= 0) ffp.prepare_uv_stream(dev, static_cast<UINT>(fv), NumVertices);
-			}
+			//if (decl_patched) {
+			//	const INT fv = static_cast<INT>(MinVertexIndex) + BaseVertexIndex;
+			//	if (fv >= 0) ffp.prepare_uv_stream(dev, static_cast<UINT>(fv), NumVertices);
+			//}
 			decal_blend_guard blend_guard;
 			if (decl_patched) blend_guard.push(dev);
 			hr = dev->DrawIndexedPrimitive(PrimitiveType, BaseVertexIndex, MinVertexIndex, NumVertices, startIndex, primCount);

@@ -431,35 +431,25 @@ namespace shared::common
 		if (FAILED(last_decl_->GetDeclaration(src_elems, &num_elems))) return false;
 
 		// Build the patched declaration:
-		//   - Copy all original elements EXCEPT COLOR0. The COLOR bytes encode UV, not actual
+		//   - Copy all original elements and modify COLOR0. The COLOR bytes encode UV, not actual
 		//     diffuse color. Keeping the COLOR element would make FFP read those bytes as vertex
 		//     diffuse, multiplying (darkening) the texture and corrupting the alpha channel.
 		//     With it removed, FFP falls back to the material diffuse ({1,1,1,1} from
 		//     setup_lighting), which is correct: texture color and alpha pass through unmodified.
-		//   - Append a FLOAT2 TEXCOORD0 on stream 1 (filled per-draw by prepare_uv_stream with
+		//   - Replace the Usage with TEXCOORD0, and a remix patch will unpack the UVs:
 		//     R/255 → U, G/255 → V, matching the original shader's mov oT0.xy, v4).
-		D3DVERTEXELEMENT9 elems[34];
 		UINT out = 0;
 		for (UINT i = 0; i < num_elems - 1; ++i)  // -1 to skip D3DDECL_END at tail
 		{
 			if (src_elems[i].Usage == D3DDECLUSAGE_COLOR && src_elems[i].UsageIndex == 0)
-				continue;
-			elems[out++] = src_elems[i];
+			{
+				src_elems[i].Type = D3DDECLTYPE_UBYTE4;
+				src_elems[i].Usage = D3DDECLUSAGE_TEXCOORD;
+			}
 		}
 
-		const D3DVERTEXELEMENT9 tc_elem = {
-			1,                      // stream 1 — separate UV stream, see prepare_uv_stream()
-			0,                      // offset 0
-			D3DDECLTYPE_FLOAT2,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		};
-		elems[out++] = tc_elem;
-		elems[out]   = D3DDECL_END();
-
 		IDirect3DVertexDeclaration9* patched = nullptr;
-		if (FAILED(dev->CreateVertexDeclaration(elems, &patched))) return false;
+		if (FAILED(dev->CreateVertexDeclaration(src_elems, &patched))) return false;
 
 		patched_decl_cache_[last_decl_] = patched;
 		dev->SetVertexDeclaration(patched);
