@@ -548,9 +548,14 @@ namespace shared::common
 
 		{
 			D3DXMATRIX proj_matrix = camera->projectionMatrix;
+			// Convert default 70° horizontal FOV to 90°: scale = tan(35°)/tan(45°) = tan(35°).
+			// Scaling both _11 and _22 by the same factor preserves aspect ratio and zoom.
+			constexpr float k_fov_scale = 0.70021f;  // tan(35°) / tan(45°)
+			proj_matrix._11 *= k_fov_scale;
+			proj_matrix._22 *= k_fov_scale;
 			dev->SetTransform(D3DTS_PROJECTION, &proj_matrix);
 		}
-
+		
 		{
 			dev->SetTransform(D3DTS_WORLD, &shared::globals::IDENTITY);
 		}
