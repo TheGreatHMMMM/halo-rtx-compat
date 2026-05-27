@@ -1,5 +1,6 @@
 #include "std_include.hpp"
 #include "shared/common/flags.hpp"
+#include "shared/common/config.hpp"
 #include "chimera/extend_limits.hpp"
 #include "chimera/window.hpp"
 
@@ -8,6 +9,11 @@ namespace comp::game
 
 	uintptr_t create_mouse_device_addr = 0;
 	CameraRenderMatrices* CameraRenderMatrices_ptr = nullptr;
+
+	// Address of Halo's global PointLightTable* variable, found via Chimera's
+	// light_table_sig pattern.  We store a pointer-to-pointer so the table
+	// address is re-read each frame (the engine resets it on map load/unload).
+	static PointLightTable** s_light_table_pp = nullptr;
 
 
 #define PATTERN_OFFSET_SIMPLE(var, pattern, byte_offset, static_addr) \
@@ -42,6 +48,17 @@ namespace comp::game
 			0
 		);
 
+		// Chimera light_table_sig: MOV ECX, [point_light_data_table_ptr]
+		// Offset +2 reaches the inline 4-byte address embedded in the MOV opcode.
+		// One DWORD read from that address gives &(PointLightTable*) in .data.
+		PATTERN_OFFSET_DWORD_PTR_CAST_TYPE(
+			s_light_table_pp,
+			PointLightTable**,
+			"8B 0D ?? ?? ?? ?? 8B 51 34 56 8B F0 81 E6 FF FF 00 00 6B F6 7C",
+			2,
+			0
+		);
+
 #pragma endregion // GAME_VARIABLES
 
 
@@ -61,6 +78,18 @@ namespace comp::game
 
 #pragma endregion // GAME_ASM_OFFSETS
 
+
+		// Read light config now that patterns are resolved and config is loaded.
+		{
+			auto& cfg = shared::common::config::get();
+			lights_enabled      = cfg.get_int("Lights", "Enabled",           1) != 0;
+			light_intensity     = static_cast<float>(cfg.get_int("Lights", "IntensityPercent", 100)) / 100.0f;
+			light_range_default = cfg.get_int("Lights", "RangeDefault",      10);
+			flashlight_enabled  = cfg.get_int("Lights", "FlashlightEnabled", 1) != 0;
+			flashlight_range    = cfg.get_int("Lights", "FlashlightRange",   8);
+			shared::common::log("Game", std::format("Lights: enabled={} intensity={:.0f}% rangeDefault={} flashlight={} (NOTE: flashlight fix unresolved)",
+				lights_enabled, light_intensity * 100.0f, light_range_default, flashlight_enabled));
+		}
 
 		if (use_pattern)
 		{
@@ -168,6 +197,63 @@ namespace comp::game
 		// ----------------------------------------------------------------
 		comp::chimera::window::apply_resolution_patches();
 
+	}
+
+
+	// ================================================================
+	// update_lights — inject runtime point lights each BeginScene
+	// ================================================================
+	//
+	// Reads Halo's PointLightTable (located via Chimera's light_table_sig),
+	// maps active entries to D3DLIGHT9 structures, and calls SetLight +
+	// LightEnable so RTX Remix can path-trace them.
+	//
+	// World-space note: Halo CE sets a proper D3DTS_VIEW matrix.  D3DLIGHT9
+	// Position is in world space — no camera-offset needed (contrast with FNV).
+	void update_lights(IDirect3DDevice9* dev)
+	{
+		if (!lights_enabled || lights_updated_frame)
+			return;
+		if (!s_light_table_pp)
+			return;
+
+		const PointLightTable* tbl = *s_light_table_pp;
+		if (!tbl || !tbl->first_element)
+			return;
+
+		lights_updated_frame = true;
+		int injected = 0;
+		const uint16_t sz = tbl->current_size;
+
+		for (uint16_t idx = 0; idx < sz && injected < MAX_EXTRACTED_LIGHTS; ++idx)
+		{
+			const PointLightEntry& e = tbl->first_element[idx];
+			if (e.id == 0) continue;   // free slot
+
+			D3DLIGHT9 light = {};
+			light.Type = D3DLIGHT_POINT;
+			light.Diffuse.r = e.red   * light_intensity;
+			light.Diffuse.g = e.green * light_intensity;
+			light.Diffuse.b = e.blue  * light_intensity;
+			light.Diffuse.a = 1.0f;
+			light.Position.x = e.x;
+			light.Position.y = e.y;
+			light.Position.z = e.z;
+			light.Range        = static_cast<float>(light_range_default);
+			light.Attenuation0 = 0.0f;
+			light.Attenuation1 = 0.0f;
+			light.Attenuation2 = 1.0f;  // inverse-square falloff
+
+			dev->SetLight(static_cast<DWORD>(injected), &light);
+			dev->LightEnable(static_cast<DWORD>(injected), TRUE);
+			++injected;
+		}
+
+		// Disable slots left over from the previous frame's higher light count.
+		for (int j = injected; j < last_enabled_lights; ++j)
+			dev->LightEnable(static_cast<DWORD>(j), FALSE);
+
+		last_enabled_lights = injected;
 	}
 
 }

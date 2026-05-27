@@ -5,9 +5,21 @@
 #include "renderer.hpp"
 #include "shared/common/shader_info.hpp"
 #include "shared/common/ffp_state.hpp"
+#include "game/game.hpp"
 
 namespace comp
 {
+// SPOT → POINT mirror state.
+// INVESTIGATION NEEDED: Halo CE's flashlight does not appear to use D3DLIGHT_SPOT at all —
+// no spotlight-type SetLight call was observed in testing.  The SPOT→POINT mirror below
+// fired zero times during a play session with the flashlight active.  The flashlight may
+// be rendered as a projected texture, a shader effect, or an entirely separate code path
+// that bypasses the D3D9 light pipeline.  Code kept for future reference; currently inert.
+// Slots 0..127 are used by our world-light injection; mirrors start at 200.
+static constexpr DWORD kSpotMirrorBase  = 200;
+static constexpr DWORD kSpotTrackSlots  = 8;
+static bool            s_is_spot[kSpotTrackSlots] = {};
+
 #pragma region D3D9Device
 
 	HRESULT d3d9ex::D3D9Device::QueryInterface(REFIID riid, void** ppvObj)
@@ -115,6 +127,7 @@ namespace comp
 	HRESULT d3d9ex::D3D9Device::Present(CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
 		shared::common::ffp_state::get().on_present();
+		comp::game::lights_updated_frame = false;
 		return m_pIDirect3DDevice9->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 	}
 
@@ -295,9 +308,28 @@ namespace comp
 		return m_pIDirect3DDevice9->GetMaterial(pMaterial);
 	}
 
+	// INVESTIGATION NEEDED: mirror never triggered during testing — game does not appear
+	// to call SetLight with D3DLIGHT_SPOT for the flashlight.  Kept for future investigation.
 	HRESULT d3d9ex::D3D9Device::SetLight(DWORD Index, CONST D3DLIGHT9* pLight)
 	{
-		return m_pIDirect3DDevice9->SetLight(Index, pLight);
+		HRESULT hr = m_pIDirect3DDevice9->SetLight(Index, pLight);
+
+		if (SUCCEEDED(hr) && pLight && game::flashlight_enabled && Index < kSpotTrackSlots)
+		{
+			s_is_spot[Index] = (pLight->Type == D3DLIGHT_SPOT);
+			if (s_is_spot[Index])
+			{
+				D3DLIGHT9 pt  = *pLight;
+				pt.Type       = D3DLIGHT_POINT;
+				pt.Range      = static_cast<float>(game::flashlight_range);
+				pt.Falloff    = 1.0f;
+				pt.Theta      = 0.0f;
+				pt.Phi        = 0.0f;
+				m_pIDirect3DDevice9->SetLight(kSpotMirrorBase + Index, &pt);
+			}
+		}
+
+		return hr;
 	}
 
 	HRESULT d3d9ex::D3D9Device::GetLight(DWORD Index, D3DLIGHT9* pLight)
@@ -307,7 +339,12 @@ namespace comp
 
 	HRESULT d3d9ex::D3D9Device::LightEnable(DWORD Index, BOOL Enable)
 	{
-		return m_pIDirect3DDevice9->LightEnable(Index, Enable);
+		HRESULT hr = m_pIDirect3DDevice9->LightEnable(Index, Enable);
+
+		if (SUCCEEDED(hr) && game::flashlight_enabled && Index < kSpotTrackSlots && s_is_spot[Index])
+			m_pIDirect3DDevice9->LightEnable(kSpotMirrorBase + Index, Enable);
+
+		return hr;
 	}
 
 	HRESULT d3d9ex::D3D9Device::GetLightEnable(DWORD Index, BOOL* pEnable)

@@ -6,6 +6,7 @@
 #include "modules/borderless.hpp"
 #include "shared/common/remix_api.hpp"
 #include "game/game.hpp"
+#include "chimera/interpolate.hpp"
 
 // see comment in main()
 #include "shared/common/dinput_hook_v1.hpp"
@@ -18,11 +19,12 @@ namespace comp
 		if (!tex_addons::initialized) {
 			tex_addons::init_texture_addons();
 		}
-	}
+                game::update_lights(shared::globals::d3d_device);
+        }
 
 
-	void main()
-	{
+        void main()
+        {
 		// Apply borderless fullscreen now that shared::globals::main_window is valid.
 		borderless::apply_to_window(shared::globals::main_window);
 
@@ -38,6 +40,8 @@ namespace comp
 		// #Step 3: hook dinput if your game uses direct input (for ImGui) - ONLY USE ONE
 		shared::common::loader::module_loader::register_module(std::make_unique<shared::common::dinput_v1>()); // v1: might cause issues with the Alt+X menu
 		//shared::common::loader::module_loader::register_module(std::make_unique<shared::common::dinput_v2>()); // v2: better but might need further tweaks
+
+		chimera::interpolate::set_up_interpolation();
 
 		MH_EnableHook(MH_ALL_HOOKS);
 	}

@@ -3,6 +3,7 @@
 
 #include "comp.hpp"
 #include "shared/common/flags.hpp"
+#include "shared/common/config.hpp"
 #include "modules/borderless.hpp"
 #include "modules/d3d9ex.hpp"
 
@@ -81,6 +82,7 @@ BOOL APIENTRY DllMain(HMODULE hmodule, const DWORD ul_reason_for_call, LPVOID)
 		shared::globals::setup_dll_module(hmodule);
 		shared::globals::setup_exe_module();
 		shared::globals::setup_homepath();
+		shared::common::config::get().load(shared::globals::root_path + "\\remix-comp.ini");
 
 		shared::common::set_console_color_blue(true);
 		std::cout << "=== Running as d3d9.dll Proxy ===\n";
